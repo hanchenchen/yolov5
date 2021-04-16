@@ -10,13 +10,13 @@ brand_id = {}
 
 def get_brand_names():
     brand_names = []
-    for dir in os.listdir('D:/Dataset/LogoDet-3K/images/'):
-        brands = os.listdir('D:/Dataset/LogoDet-3K/images/' + dir)
+    for dir in os.listdir('../LogoDet-3K/images/'):
+        brands = os.listdir('../LogoDet-3K/images/' + dir)
         brand_names += brands
         print(dir, brands)
         for brand in brands:
-            if not os.path.exists('D:/Dataset/LogoDet-3K/labels/' + dir + '/' + brand):
-                os.makedirs('D:/Dataset/LogoDet-3K/labels/' + dir + '/' + brand)
+            if not os.path.exists('../LogoDet-3K/labels/' + dir + '/' + brand):
+                os.makedirs('../LogoDet-3K/labels/' + dir + '/' + brand)
             brand_id[brand] = len(brand_id)
     print('nc:', len(brand_names))
     print('names:', brand_names)
@@ -29,9 +29,9 @@ def split_train_val_test(images):
     images = ['./' + '/'.join(i.split('/')[3:]) for i in images]
     random.shuffle(images)
     print('the number of images:', len(images), '(', images[0], '...)')
-    train = open('D:/Dataset/LogoDet-3K/train.txt', 'w')
-    val = open('D:/Dataset/LogoDet-3K/val.txt', 'w')
-    test_dev = open('D:/Dataset/LogoDet-3K/test-dev.txt', 'w')
+    train = open('../LogoDet-3K/train.txt', 'w')
+    val = open('../LogoDet-3K/val.txt', 'w')
+    test_dev = open('../LogoDet-3K/test-dev.txt', 'w')
     train.write('\n'.join(images[:int(len(images) * 0.8)]))
     val.write('\n'.join(images[int(len(images) * 0.8):int(len(images) * 0.9)]))
     test_dev.write('\n'.join(images[int(len(images) * 0.9):]))
@@ -73,7 +73,7 @@ def get_label():
 
 
 if __name__ == '__main__':
-    images = glob.glob('D:/Dataset/LogoDet-3K/images/*/*/*.jpg')
+    images = glob.glob('../LogoDet-3K/images/*/*/*.jpg')
     images = [i.replace('\\', '/') for i in images]
     get_brand_names()
     split_train_val_test(images)

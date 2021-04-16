@@ -26,7 +26,7 @@ def get_brand_names():
 
 
 def split_train_val_test(images):
-    images = ['./' + '/'.join(i.split('/')[3:]) for i in images]
+    # images = ['./' + '/'.join(i.split('/')[3:]) for i in images]
     random.shuffle(images)
     print('the number of images:', len(images), '(', images[0], '...)')
     train = open('../LogoDet-3K/train.txt', 'w')

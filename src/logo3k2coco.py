@@ -56,7 +56,7 @@ def parse_xml(fn):
         ymax = float(object.getElementsByTagName("ymax")[0].firstChild.data)
         x = (xmax + xmin) /2 / width
         w = (xmax - xmin) / width
-        y = (ymax - ymin) /2/ height
+        y = (ymax + ymin) /2/ height
         h = (ymax - ymin) / height
         labels.append(' '.join((str(name), str(x), str(y), str(w), str(h))))
         # if len(objects)>1:

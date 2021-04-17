@@ -7,6 +7,7 @@ import xml.dom.minidom as xmldom
 images = []
 brand_id = {}
 
+random.seed(1)
 
 def get_brand_names():
     brand_names = []
@@ -53,9 +54,9 @@ def parse_xml(fn):
         xmax = float(object.getElementsByTagName("xmax")[0].firstChild.data)
         ymin = float(object.getElementsByTagName("ymin")[0].firstChild.data)
         ymax = float(object.getElementsByTagName("ymax")[0].firstChild.data)
-        x = xmin / width
+        x = (xmax + xmin) /2 / width
         w = (xmax - xmin) / width
-        y = ymin / height
+        y = (ymax - ymin) /2/ height
         h = (ymax - ymin) / height
         labels.append(' '.join((str(name), str(x), str(y), str(w), str(h))))
         # if len(objects)>1:

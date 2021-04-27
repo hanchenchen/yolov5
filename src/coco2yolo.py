@@ -47,12 +47,16 @@ def get_label(labels):
     for i in tqdm(range(len(labels['annotations']))):
         anno = labels['annotations'][i]
         id = anno['image_id']
+        if not os.path.exists('../' + dataset_name + '/images/' + id_name[id]):
+            continue
+        # print('../' + dataset_name + '/images/' + id_name[id])
+
         txt = open('../' + dataset_name + '/labels/' + id_name[id][:-3] + 'txt', 'a')
         x, y, w, h = anno['bbox']
         width = id_w[id]
         height = id_h[id]
         x = (x + w/2)/width
-        y = (y + y/2)/height
+        y = (y + h/2)/height
         w /= width
         h /= height
         txt.write(' '.join((str(anno['category_id']), str(x), str(y), str(w), str(h))) + '\n')
@@ -67,6 +71,8 @@ if __name__ == '__main__':
 
     images = glob.glob('../' + dataset_name + '/images/*.jpg')
     images = [i.replace('\\', '/') for i in images]
+    print(len(images))
+
     split_train_val_test(images)
 
     get_label(labels)

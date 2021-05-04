@@ -3,7 +3,8 @@ import os
 import glob
 import random
 import xml.dom.minidom as xmldom
-
+from tqdm import tqdm
+import shutil
 images = []
 brand_id = {}
 dataset_name = "Openbrand"
@@ -29,15 +30,28 @@ def split_train_val_test(images):
     print('the number of images:', len(images), '(', images[0], '...)')
     train = open('../'+ dataset_name + '/train.txt', 'w')
     val = open('../'+ dataset_name + '/val.txt', 'w')
-    test_dev = open('../'+ dataset_name + '/test-dev.txt', 'w')
-    train.write('\n'.join(images[:int(len(images) * 0.8)]))
-    val.write('\n'.join(images[int(len(images) * 0.8):int(len(images) * 0.9)]))
-    test_dev.write('\n'.join(images[int(len(images) * 0.9):]))
+    train.write('\n'.join(images[:int(len(images) * 0.9)]))
+    val.write('\n'.join(images[int(len(images) * 0.9):]))
     train.close()
     val.close()
+
+def get_test():
+    # images = ['./' + '/'.join(i.split('/')[3:]) for i in images]
+    images = glob.glob('../' + dataset_name + '/test/*.jpg')
+    images = [i.replace('\\', '/') for i in images]
+    random.shuffle(images)
+    print('the number of test images:', len(images), '(', images[0], '...)')
+    test_dev = open('../'+ dataset_name + '/test-dev.txt', 'w')
+    test_dev.write('\n'.join(images))
     test_dev.close()
 
-from tqdm import tqdm
+def move_images():
+    images = glob.glob('../' + dataset_name + '/data/*/*.jpg')
+    images = [i.replace('\\', '/') for i in images]
+    for img in tqdm(images):
+        shutil.move(img, '../' + dataset_name + '/images')
+
+
 def get_label(labels):
     # remove the ../Openbrand/labels/
     id_name = {i['id']: i['file_name'] for i in labels['images']}
@@ -62,10 +76,14 @@ def get_label(labels):
         txt.write(' '.join((str(anno['category_id']), str(x), str(y), str(w), str(h))) + '\n')
         txt.close()
 
+ # -- yolov5
+ # -- Openbrand
+ #    | -- data
+ #          | --
 
 import json
 if __name__ == '__main__':
-
+    # move_images()
     labels = json.load(open('../' + dataset_name + '/openbrand_train.json', 'r'))
     get_brand_names(labels['categories'])
 
@@ -76,3 +94,4 @@ if __name__ == '__main__':
     split_train_val_test(images)
 
     get_label(labels)
+    # get_test()

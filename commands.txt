@@ -1,0 +1,20 @@
+## 49
+
+sudo CUDA_VISIBLE_DEVICES=0 /HDD/ningbo/anaconda3/envs/pytorcharb/bin/python test.py --img 640 --batch 8  --data src/openbrand.yaml --weights runs/train/all_data_default_s/weights/best.pt --task test  --save-json
+
+
+sudo mount -t cifs -o username=han,password=422422,vers=2.0 //10.214.150.149/Share /HDD/ningbo/Share/
+cd /HDD/ningbo/Share/yolov5/
+conda activate pytorcharb
+sudo CUDA_VISIBLE_DEVICES=1 /HDD/ningbo/anaconda3/envs/pytorcharb/bin/python train.py --img 640 --batch 8 --epochs 100 --data src/openbrand.yaml --weights '' --cfg models/yolov5s.yaml --name all_data_default_s --resume
+
+docker run -itd --gpus 2,3 --restart always  -p 10008:10008 -p 10009:10009 -w /workspace -v /home/hcc/workspace:/workspace --name test  nvidia/cuda:11.0-base /bin/bash
+
+sudo mount -t cifs -o username=han,password=422422,vers=2.0 //10.214.150.149/Share b_y:/Share
+
+docker run -itd --gpus all --restart always  --ipc=host  -w /workspace -v /home/hcc/workspace:/workspace --name b_y hcc_y /bin/bash
+//  --privileged=true 添加这个参数后无法attach
+
+
+## 105
+CUDA_VISIBLE_DEVICES=0,1,2,3 python test.py --img 640 --batch 8  --data src/openbrand.yaml --weights runs/train/all_data_default_s/weights/best.pt --task test  --save-json

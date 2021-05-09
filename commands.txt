@@ -1,21 +1,37 @@
-## 49
 
-sudo CUDA_VISIBLE_DEVICES=0 /HDD/ningbo/anaconda3/envs/pytorcharb/bin/python test.py --img 640 --batch 8  --data src/openbrand.yaml --weights runs/train/all_data_default_s/weights/best.pt --task test  --save-json
-
-
-sudo mount -t cifs -o username=han,password=422422,vers=2.0 //10.214.150.149/Share /HDD/ningbo/Share/
-cd /HDD/ningbo/Share/yolov5/
-conda activate pytorcharb
-sudo CUDA_VISIBLE_DEVICES=1 /HDD/ningbo/anaconda3/envs/pytorcharb/bin/python train.py --img 640 --batch 8 --epochs 100 --data src/openbrand.yaml --weights '' --cfg models/yolov5s.yaml --name all_data_default_s --resume
+## 105
 
 docker run -itd --gpus 2,3 --restart always  -p 10008:10008 -p 10009:10009 -w /workspace -v /home/hcc/workspace:/workspace --name test  nvidia/cuda:11.0-base /bin/bash
 
 
 
-docker run -itd --gpus all --restart always  --ipc=host  -w /workspace -v /home/hcc/workspace:/workspace --name b_y hcc_y /bin/bash
+docker run -itd --gpus all --restart always  --ipc=host  -w /workspace -v /home/hcc/workspace:/workspace --name open_mmlab hcc_y /bin/bash
 //  --privileged=true 添加这个参数后无法attach
 
 
-## 105
-python train.py --img 640 --batch 32 --epochs 100 --data src/openbrand.yaml --weights runs/train/0_resume_from_epoch5/weights/last.pt --cfg models/yolov5s.yaml --name exp --worker 32
-CUDA_VISIBLE_DEVICES=0,1,2,3 python test.py --img 640 --batch 8  --data src/openbrand.yaml --weights runs/train/all_data_default_s/weights/best.pt --task test  --save-json
+
+
+CUDA_VISIBLE_DEVICES=1 python test.py --img 640 --batch 2  --data src/openbrand.yaml --weights runs/train/exp/weights/best.pt --task test  --save-json
+
+// CUDA_VISIBLE_DEVICES=2,3 python -m torch.distributed.launch --nproc_per_node=2 --master_port=14322 train.py --img 640 --batch 32 --epochs 100 --data src/openbrand.yaml --weights runs/train/baseline_5x/weights/last.pt  --cfg models/yolov5x.yaml --name baseline_5x --worker 32
+
+YOLOv5_s baseline:
+CUDA_VISIBLE_DEVICES=0,1  python train.py --resume
+CUDA_VISIBLE_DEVICES=0 python train.py --img 640 --batch 16 --epochs 10 --data src/openbrand.yaml --weights runs/train/exp/weights/best.pt --cfg models/yolov5s.yaml --name exp --exist-ok --cache-images --evolve
+
+--hyp hyp.custom.yaml
+--adam
+--multi-scale
+--image-weights ?
+
+YOLOv5_x baseline:
+CUDA_VISIBLE_DEVICES=2,3 python train.py --img 640 --batch 32 --epochs 100 --data src/openbrand.yaml --weights '' --cfg models/yolov5x.yaml --name baseline_5x --worker 32
+
+
+## 49
+
+sudo CUDA_VISIBLE_DEVICES=0 /HDD/ningbo/anaconda3/envs/pytorcharb/bin/python test.py --img 640 --batch 8  --data src/openbrand.yaml --weights runs/train/all_data_default_s/weights/best.pt --task test  --save-json
+
+cd /HDD/ningbo/Share/yolov5/
+conda activate pytorcharb
+sudo CUDA_VISIBLE_DEVICES=1 /HDD/ningbo/anaconda3/envs/pytorcharb/bin/python train.py --img 640 --batch 8 --epochs 100 --data src/openbrand.yaml --weights '' --cfg models/yolov5s.yaml --name all_data_default_s --resume

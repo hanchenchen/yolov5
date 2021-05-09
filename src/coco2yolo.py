@@ -75,7 +75,21 @@ def get_label(labels):
         h /= height
         txt.write(' '.join((str(anno['category_id']), str(x), str(y), str(w), str(h))) + '\n')
         txt.close()
-
+def filename2id():
+    dataset_name = "Openbrand"
+    labels = json.load(open('../' + dataset_name + '/Openbrand_train.json', 'r'))['images']
+    file_id = {i['file_name']: str(i['id']) for i in labels}
+    images = glob.glob('../' + dataset_name + '/images/*.jpg')[:10]
+    images = [i.replace('\\', '/') for i in images]
+    for img in tqdm(images):
+        shutil.move(img, '../' + dataset_name + '/images_id/' +file_id[img.split('/')[-1]] + ".jpg")
+    dataset_name = "Openbrand"
+    labels = json.load(open('../' + dataset_name + '/openBrand_testA_list.json', 'r'))
+    file_id = {i['file_name']: str(i['id']) for i in labels}
+    images = glob.glob('../' + dataset_name + '/test/*.jpg')[:10]
+    images = [i.replace('\\', '/') for i in images]
+    for img in tqdm(images):
+        shutil.move(img, '../' + dataset_name + '/test_id/' + file_id[img.split('/')[-1]] + ".jpg")
  # -- yolov5
  # -- Openbrand
  #    | -- data
@@ -84,14 +98,15 @@ def get_label(labels):
 import json
 if __name__ == '__main__':
     # move_images()
-    labels = json.load(open('../' + dataset_name + '/openbrand_train.json', 'r'))
-    get_brand_names(labels['categories'])
-
-    images = glob.glob('../' + dataset_name + '/images/*.jpg')
-    images = [i.replace('\\', '/') for i in images]
-    print(len(images))
-
-    split_train_val_test(images)
-
-    get_label(labels)
+    # labels = json.load(open('../' + dataset_name + '/openbrand_train.json', 'r'))
+    # get_brand_names(labels['categories'])
+    #
+    # images = glob.glob('../' + dataset_name + '/images/*.jpg')
+    # images = [i.replace('\\', '/') for i in images]
+    # print(len(images))
+    #
+    # split_train_val_test(images)
+    #
+    # get_label(labels)
     # get_test()
+    filename2id()
